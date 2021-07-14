@@ -10,19 +10,20 @@ Content-Type: application/json
 
 ###
 POST http://localhost:3000/login/
-Content-Type: : application/json
+Content-Type:  application/json
 
 {
     "username" : "JoeBiden",
-    "password" : "biden@123",
+    "password" : "biden@123"
 }
 
 ###
 GET http://localhost:3000/user/tweets/feed/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvZUJpZGVuIiwiaWF0IjoxNjI2MTczNTI2fQ.FvLGy67hyGsZ4vzjcAH1iZ8htkRTohvKfGSsacNcUo8
 
 ###
 GET http://localhost:3000/user/following/
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvZUJpZGVuIiwiaWF0IjoxNjI2MTczNTI2fQ.FvLGy67hyGsZ4vzjcAH1iZ8htkRTohvKfGSsacNcUo8
 ###
 GET http://localhost:3000/user/followers/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvZUJpZGVuIiwiaWF0IjoxNjI2MTczNTI2fQ.FvLGy67hyGsZ4vzjcAH1iZ8htkRTohvKfGSsacNcUo8

@@ -50,7 +50,7 @@ function authenticateToken(request, response, next) {
         response.status(401);
         response.send("Invalid JWT Token");
       } else {
-        console.log(payload);
+        request.username = payload.username;
         next();
       }
     });
@@ -110,27 +110,69 @@ app.post("/login/", async (request, response) => {
 });
 
 app.get("/user/tweets/feed/", authenticateToken, async (request, response) => {
+  let { username } = request;
   const getLatestTweetsQuery = `
     SELECT
-      user.username, tweet.tweet, user.date_time AS dateTime
+        user1.username,tweet.tweet,tweet.date_time AS dateTime 
     FROM
-      user 
-    NATURAL JOIN tweet
-    ORDER BY dateTime
+        follower 
+    JOIN 
+        user
+    ON user.user_id = follower.follower_user_id
+    JOIN
+        user AS user1
+    ON user1.user_id = follower.following_user_id
+    JOIN tweet 
+    ON user1.user_id = tweet.user_id
+    WHERE follower.follower_user_id = (
+        SELECT user_id
+        FROM user
+        WHERE username = '${username}'
+    )
+    ORDER BY dateTime DESC
     LIMIT 4;`;
   const tweetsArray = await database.all(getLatestTweetsQuery);
   response.send(tweetsArray);
 });
 app.get("/user/following/", authenticateToken, async (request, response) => {
-  const getAllNamesQuery = `SELECT user.username AS name
-    FROM user JOIN follower ON user.user_id = follower.following_user_id;`;
+  let { username } = request;
+  const getAllNamesQuery = `
+  SELECT
+        user1.username AS name
+    FROM
+        follower 
+    JOIN 
+        user
+    ON user.user_id = follower.follower_user_id
+    JOIN
+        user AS user1
+    ON user1.user_id = follower.following_user_id
+    WHERE follower.follower_user_id = (
+        SELECT user_id 
+        FROM user
+        WHERE username = '${username}'
+        )`;
   const getNamesArray = await database.all(getAllNamesQuery);
   response.send(getNamesArray);
 });
 
 app.get("/user/followers/", authenticateToken, async (request, response) => {
-  const getNamesQuery = `SELECT user.username AS name
-    FROM user JOIN follower ON user.user_id = follower.follower_user_id;`;
+  const { username } = request;
+  const getNamesQuery = `SELECT
+        user1.username AS name
+    FROM
+        follower 
+    JOIN 
+        user
+    ON user.user_id = follower.following_user_id
+    JOIN
+        user AS user1
+    ON user1.user_id = follower.follower_user_id
+    WHERE follower.following_user_id = (
+        SELECT user_id 
+        FROM user
+        WHERE username = '${username}'
+        )`;
   const getNamesArray = await database.all(getNamesQuery);
   response.send(getNamesArray);
 });
