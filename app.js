@@ -183,7 +183,7 @@ app.get("/tweets/:tweetId", authenticateToken, async (request, response) => {
     response.status(401);
     response.send("Invalid Request");
   } else {
-    const getUserTweetsQuery = `SELECT tweet,like.count(like_id) AS likes, reply.count(reply_id) AS replies, like.date_time as dateTime
+    const getUserTweetsQuery = `SELECT tweet,count(like.like_id) AS likes, count(reply.reply_id) AS replies, like.date_time as dateTime
     FROM tweet JOIN reply on tweet.tweet_id = reply.tweet_id
     JOIN like on tweet.tweet_id = like.tweet_id; WHERE tweet.tweet_id = ${tweetId};`;
   }
